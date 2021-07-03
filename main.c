@@ -30,45 +30,46 @@ void    print_philo(t_philo philo)
 
     i = 0;
     printf("we have [%d] philosopher\n", philo.num_philo);
-    printf("[%d] is time to die\n", philo.time_die);
-    printf("[%d] is time to eat\n", philo.time_eat);
-    printf("[%d] is time to sleep\n", philo.time_sleep);
+    printf("[%ld] is time to die\n", philo.time_die);
+    printf("[%ld] is time to eat\n", philo.time_eat);
+    printf("[%ld] is time to sleep\n", philo.time_sleep);
     write(1, "[", 1);
     while (i < philo.num_philo)
         printf("%d ", philo.eat_times[i++]);
     write(1, "]", 1);
 }
 
-void    *func(void *ptr)
+void    *routine(void *ptr)
 {
     t_philo philo;
+	t_philo	*all;
 
-    philo = *(t_philo *)ptr;
-    if (philo.N == philo.num_philo - 1)
-    {
-        pthread_mutex_lock(&philo.forks[0]);
-        pthread_mutex_lock(&philo.forks[philo.N]);
-    }
-    else
-    {
-        pthread_mutex_lock(&philo.forks[philo.N]);
-        pthread_mutex_lock(&philo.forks[philo.N + 1]);
-    }
-    printf("%d has taken the two forks\n", philo.N);
-    printf("%d is eating\n", philo.N);
-    usleep(philo.time_eat);
-    if (philo.N == philo.num_philo - 1)
-    {
-        pthread_mutex_unlock(&philo.forks[0]);
-        pthread_mutex_unlock(&philo.forks[philo.N]);
-    }
-    else
-    {
-        pthread_mutex_unlock(&philo.forks[philo.N]);
-        pthread_mutex_unlock(&philo.forks[philo.N + 1]);
-    }
-    //(philo.N)++;
-    //printf("the id is %")
+    all = (t_philo *)ptr;
+	philo = all[N];
+	gettimeofday(&philo.start_eating, NULL);
+	while (died != 1)
+	{
+		//*********************** start eating
+		philo = eating_thread(philo);
+		////////verify dying
+		if (verify_dying(philo) == 1)
+		{
+			//printf("yes\n");
+			died = 1;
+			break ;
+		}
+		//*************************** start sleeping
+		printf("%d has slept\n", philo.id);
+		//can he die while sleeping ? !! I think yes
+		my_sleep(philo.time_sleep);
+		if (verify_dying(philo) == 1)
+		{
+			died = 1;
+			break ;
+		}
+		//************************** start thinking
+		printf("%d is thinking\n", philo.id);
+	}
     return (ptr);
 }
 
@@ -87,21 +88,47 @@ t_thread   create_threads(t_philo philo)
     tr.mutex = forks;
     while (i < philo.num_philo)
     {
-		all[i] = malloc(sizeof(t_philo));
-		all[i  ]
-        if ( pthread_create(&threads[philo.N], NULL, &func, &philo) != 0)
+		//all[i] = malloc(sizeof(t_philo));
+        philo.id = i + 1;
+		N = i;
+		philo.count_eat = 0;
+		all[i] = philo;
+        if ( pthread_create(&threads[i], NULL, &routine, all) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
 		//usleep(160000);
-        (philo.N)++;
+        i += 2;
 		//printf("n is %d\n", N);
     }
     i = 0;
     while (i < philo.num_philo)
     {
-        pthread_join(threads[i++], NULL);
+        pthread_join(threads[i], NULL);
+        i += 2;
+    }
+    i = 1;
+    while (i < philo.num_philo)
+    {
+		//all[i] = malloc(sizeof(t_philo));
+        philo.id = i + 1;
+		N = i;
+		all[i] = philo;
+        if ( pthread_create(&threads[i], NULL, &routine, all) != 0)
+        {
+            printf("%s\n", strerror(errno));
+            exit(EXIT_FAILURE);
+        }
+		//usleep(160000);
+        i += 2;
+		//printf("n is %d\n", N);
+    }
+    i = 1;
+    while (i < philo.num_philo)
+    {
+        pthread_join(threads[i], NULL);
+        i += 2;
     }
     tr.threads = threads;
     return (tr);
@@ -130,7 +157,10 @@ int main(int argc, char **argv)
     t_thread   philo;
 
     philosophers = parse_arguments(argc, argv);
-	philosophers.N = 0;
+	philosophers.id = 0;
+	//flag = initialize_flag(philosophers);
+	N = 0;
+	died = 0;
     philosophers.forks = initialize_forks(philosophers);
     philo = create_threads(philosophers);
     return (1);

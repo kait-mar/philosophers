@@ -15,7 +15,7 @@ CC= gcc
 
 FLAGS= -Wall -Wextra -Werror
 
-SRCS=  main.c parse.c
+SRCS=  main.c parse.c philo_utils.c time.c
 
 OBJ = $(SRCS:.c=.o)
 
