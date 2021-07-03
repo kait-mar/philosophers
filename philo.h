@@ -14,7 +14,11 @@ typedef struct s_philo
     int time_eat;
     int time_sleep;
     int *eat_times;
+    pthread_mutex_t  *forks;
+    int N;
+
 }   t_philo;
+
 typedef struct s_thread
 {
     pthread_t   *threads;

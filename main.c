@@ -1,8 +1,5 @@
 #include "philo.h"
 
-pthread_mutex_t  *forks;
-int N;
-
 t_philo parse_arguments(int argc, char **argv)
 {
     int i;
@@ -47,30 +44,31 @@ void    *func(void *ptr)
     t_philo philo;
 
     philo = *(t_philo *)ptr;
-    if (N == philo.num_philo - 1)
+    if (philo.N == philo.num_philo - 1)
     {
-        pthread_mutex_lock(&forks[0]);
-        pthread_mutex_lock(&forks[N]);
+        pthread_mutex_lock(&philo.forks[0]);
+        pthread_mutex_lock(&philo.forks[philo.N]);
     }
     else
     {
-        pthread_mutex_lock(&forks[N]);
-        pthread_mutex_lock(&forks[N + 1]);
+        pthread_mutex_lock(&philo.forks[philo.N]);
+        pthread_mutex_lock(&philo.forks[philo.N + 1]);
     }
-    printf("%d has taken the two forks\n", N);
-    printf("%d is eating\n", N);
+    printf("%d has taken the two forks\n", philo.N);
+    printf("%d is eating\n", philo.N);
     usleep(philo.time_eat);
-    if (N == philo.num_philo - 1)
+    if (philo.N == philo.num_philo - 1)
     {
-        pthread_mutex_unlock(&forks[0]);
-        pthread_mutex_unlock(&forks[N]);
+        pthread_mutex_unlock(&philo.forks[0]);
+        pthread_mutex_unlock(&philo.forks[philo.N]);
     }
     else
     {
-        pthread_mutex_unlock(&forks[N]);
-        pthread_mutex_unlock(&forks[N + 1]);
+        pthread_mutex_unlock(&philo.forks[philo.N]);
+        pthread_mutex_unlock(&philo.forks[philo.N + 1]);
     }
-    N++;
+    //(philo.N)++;
+    //printf("the id is %")
     return (ptr);
 }
 
@@ -79,20 +77,26 @@ t_thread   create_threads(t_philo philo)
     t_thread    tr;
     pthread_t   *threads;
     pthread_mutex_t  *forks;
+	t_philo	*all;
 
     int i = 0;
+	all = malloc(sizeof(t_philo) * philo.num_philo);
     threads = malloc(sizeof(pthread_t) * philo.num_philo);
     forks = malloc(sizeof(pthread_mutex_t) * philo.num_philo);
-    int N = 0;
+    i = 0;
     tr.mutex = forks;
-    while (N < philo.num_philo)
+    while (i < philo.num_philo)
     {
-        if ( pthread_create(&threads[N], NULL, &func, &philo) != 0)
+		all[i] = malloc(sizeof(t_philo));
+		all[i  ]
+        if ( pthread_create(&threads[philo.N], NULL, &func, &philo) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
-        N++;
+		//usleep(160000);
+        (philo.N)++;
+		//printf("n is %d\n", N);
     }
     i = 0;
     while (i < philo.num_philo)
@@ -106,19 +110,18 @@ t_thread   create_threads(t_philo philo)
 pthread_mutex_t *initialize_forks(t_philo philo)
 {
     int i;
-    pthread_mutex_t  *forks;
 
     i = 0;
-    forks = malloc(sizeof(pthread_mutex_t) * philo.num_philo);
+    philo.forks = malloc(sizeof(pthread_mutex_t) * philo.num_philo);
     while (i < philo.num_philo)
     {
-        if (pthread_mutex_init(&forks[i++], NULL) != 0)
+        if (pthread_mutex_init(&philo.forks[i++], NULL) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
     }
-    return (forks);
+    return (philo.forks);
 }
 
 int main(int argc, char **argv)
@@ -127,7 +130,8 @@ int main(int argc, char **argv)
     t_thread   philo;
 
     philosophers = parse_arguments(argc, argv);
-    forks = initialize_forks(philosophers);
+	philosophers.N = 0;
+    philosophers.forks = initialize_forks(philosophers);
     philo = create_threads(philosophers);
     return (1);
 }
