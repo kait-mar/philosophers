@@ -22,7 +22,7 @@ int verify_dying(t_philo philo)
     gettimeofday(&tv, NULL);
     if (micro_to_mill((long)tv.tv_usec - (long)philo.start_eating.tv_usec) >= philo.time_die)
     {
-        printf("%d has died\n", philo.id + 1);
+        printf("%d has died\n", philo.id);
         died = 1;
         return (1);
     }

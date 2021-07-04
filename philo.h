@@ -45,5 +45,6 @@ t_philo eating_thread(t_philo philo);
 void    my_sleep(long time);
 int verify_dying(t_philo philo);
 int *initialize_flag(t_philo philo);
+t_philo *fill_copy(t_philo *new, t_philo philo);
 
 #endif

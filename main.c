@@ -80,24 +80,28 @@ t_thread   create_threads(t_philo philo)
     t_thread    tr;
     pthread_t   *threads;
     pthread_mutex_t  *forks;
-	t_philo	*all;
+	//t_philo	*all;
+    t_philo *new;
 
     int i = 0;
-	all = malloc(sizeof(t_philo) * philo.num_philo);
+	//all = malloc(sizeof(t_philo) * philo.num_philo);
     threads = malloc(sizeof(pthread_t) * philo.num_philo);
     forks = malloc(sizeof(pthread_mutex_t) * philo.num_philo);
     i = 0;
     tr.mutex = forks;
     while (i < philo.num_philo)
     {
-		//all[i] = malloc(sizeof(t_philo));
-        philo.id = i + 1;
+        //all[i] = malloc(sizeof(t_philo));
         //N = malloc(sizeof(int));
 		//*N = i;
-		philo.count_eat = 0;
-		all[i] = philo;
+        //all[i] = philo;
         //all[i].died = 0;
-        if ( pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
+        new = malloc(sizeof(t_philo));
+        new = fill_copy(new, philo);
+        new->id = i + 1;
+		new->count_eat = 0;
+        new->died = 0;
+        if ( pthread_create(&threads[i], NULL, &routine, new) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
@@ -115,11 +119,16 @@ t_thread   create_threads(t_philo philo)
     while (i < philo.num_philo)
     {
 		//all[i] = malloc(sizeof(t_philo));
-        philo.id = i + 1;
+        //philo.id = i + 1;
         //N = malloc(sizeof(int));
 		//*N = i;
-		all[i] = philo;
-        if ( pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
+		//all[i] = philo;
+        new = malloc(sizeof(t_philo));
+        new = fill_copy(new, philo);
+        new->id = i + 1;
+		new->count_eat = 0;
+        new->died = 0;
+        if ( pthread_create(&threads[i], NULL, &routine, new) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
