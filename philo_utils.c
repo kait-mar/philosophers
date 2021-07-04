@@ -21,11 +21,22 @@ t_philo *fill_copy(t_philo *new, t_philo philo)
     return (new);
 }
 
+t_philo copy(t_philo new, t_philo philo)
+{
+    new.eat_times = philo.eat_times;
+    new.time_die = philo.time_die;
+    new.time_eat = philo.time_eat;
+    new.time_sleep = philo.time_sleep;
+    new.num_philo = philo.num_philo;
+    new.forks = philo.forks;
+    return (new);
+}
+
 t_philo eating_thread(t_philo philo)
 {
-    if (verify_dying(philo) == 1)
+    philo = verify_dying(philo);
+    if (philo.died == 1 || died == 1)
     {
-        philo.died = 1;
         return (philo);
     }
     philo.count_eat++;
@@ -45,9 +56,20 @@ t_philo eating_thread(t_philo philo)
 			printf("error in locking a fork for %d | %s\n", philo.id, strerror(errno));
 		}
     }
-    printf("%d has taken the two forks\n", philo.id);
+    if (philo.died == 0 && died == 0)
+    {
+        printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
+        printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
+    }
+    else
+        return (philo);
+    /*printf("%d has taken a fork\n", philo.id);
+    printf("%d has taken a fork\n", philo.id);*/
     gettimeofday(&philo.start_eating, NULL);
-    printf("%d is eating\n", philo.id);
+     if (philo.died == 0 && died == 0)
+        printf("%lld %d is eating\n", get_time(philo),philo.id);
+    else
+        return (philo);
     my_sleep(philo.time_eat);
     if (philo.id == philo.num_philo)
     {

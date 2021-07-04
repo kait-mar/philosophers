@@ -42,36 +42,36 @@ void    print_philo(t_philo philo)
 void    *routine(void *ptr)
 {
     t_philo philo;
-	//t_philo	*all;
+    int     check;
 
-    //all = (t_philo *)ptr;
-	//philo = all[*N];
+    check = 0;
     philo = *(t_philo *)ptr;
     gettimeofday(&philo.start_eating, NULL);
-	while (philo.died != 1)
+	while (philo.died != 1 && died != 1)
 	{
-		//*********************** start eating
+        check = 1;
 		philo = eating_thread(philo);
-		////////verify dying
-		if (verify_dying(philo) == 1)
+		philo = verify_dying(philo);
+		if (philo.died == 1 || died == 1)
 		{
-			philo.died = 1;
-			died = 1;
 			break ;
 		}
-		//*************************** start sleeping
-		printf("%d has slept\n", philo.id);
+		printf("%lld %d is sleeping\n", get_time(philo),  philo.id);
 		//can he die while sleeping ? !! I think yes
 		my_sleep(philo.time_sleep);
-		if (verify_dying(philo) == 1)
+        philo = verify_dying(philo);
+		if (philo.died == 1 || died == 1)
 		{
-            philo.died = 1;
-			died = 1;
 			break ;
 		}
-		//************************** start thinking
-		printf("%d is thinking\n", philo.id);
+		printf("%lld %d is thinking\n", get_time(philo),  philo.id);
 	}
+    if (check == 0)
+    {
+        /*if (pthread_mutex_lock(&philo.print[philo.id - 1]) != 0)
+            printf("error in locking to die\n");*/
+        printf("%lld %d died\n", get_time(philo), philo.id);
+    }
     return (ptr);
 }
 
@@ -80,28 +80,31 @@ t_thread   create_threads(t_philo philo)
     t_thread    tr;
     pthread_t   *threads;
     pthread_mutex_t  *forks;
-	//t_philo	*all;
-    t_philo *new;
+	t_philo	*all;
+    //t_philo *new;
 
     int i = 0;
-	//all = malloc(sizeof(t_philo) * philo.num_philo);
+	all = malloc(sizeof(t_philo) * philo.num_philo);
+    while (i < philo.num_philo)
+        gettimeofday(&all[i++].start, NULL);
     threads = malloc(sizeof(pthread_t) * philo.num_philo);
     forks = malloc(sizeof(pthread_mutex_t) * philo.num_philo);
     i = 0;
     tr.mutex = forks;
     while (i < philo.num_philo)
     {
-        //all[i] = malloc(sizeof(t_philo));
         //N = malloc(sizeof(int));
-		//*N = i;
-        //all[i] = philo;
-        //all[i].died = 0;
-        new = malloc(sizeof(t_philo));
+		//N[j++] = i;
+        all[i] = copy(all[i], philo);
+        all[i].died = 0;
+        all[i].id = i + 1;
+        all[i].count_eat = 0;
+        /*new = malloc(sizeof(t_philo));
         new = fill_copy(new, philo);
         new->id = i + 1;
 		new->count_eat = 0;
-        new->died = 0;
-        if ( pthread_create(&threads[i], NULL, &routine, new) != 0)
+        new->died = 0;*/
+        if ( pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
@@ -119,16 +122,18 @@ t_thread   create_threads(t_philo philo)
     while (i < philo.num_philo)
     {
 		//all[i] = malloc(sizeof(t_philo));
-        //philo.id = i + 1;
         //N = malloc(sizeof(int));
-		//*N = i;
-		//all[i] = philo;
-        new = malloc(sizeof(t_philo));
+		//N[j++] = i;
+		all[i] = copy(all[i], philo);
+        all[i].died = 0;
+        all[i].id = i + 1;
+        all[i].count_eat = 0;
+        /*new = malloc(sizeof(t_philo));
         new = fill_copy(new, philo);
         new->id = i + 1;
 		new->count_eat = 0;
-        new->died = 0;
-        if ( pthread_create(&threads[i], NULL, &routine, new) != 0)
+        new->died = 0;*/
+        if (pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
@@ -147,7 +152,7 @@ t_thread   create_threads(t_philo philo)
     return (tr);
 }
 
-pthread_mutex_t *initialize_forks(t_philo philo)
+pthread_mutex_t *initialize_mutex(t_philo philo)
 {
     int i;
 
@@ -173,9 +178,10 @@ int main(int argc, char **argv)
 	philosophers.id = 0;
     philosophers.died = 0;
 	//flag = initialize_flag(philosophers);
-	//N = 0;
+	N = initialize_flag(philosophers);
 	died = 0;
-    philosophers.forks = initialize_forks(philosophers);
+    philosophers.forks = initialize_mutex(philosophers);
+    philosophers.print = initialize_mutex(philosophers);
     philo = create_threads(philosophers);
     return (1);
 }
