@@ -45,7 +45,7 @@ void    *routine(void *ptr)
 	t_philo	*all;
 
     all = (t_philo *)ptr;
-	philo = all[N];
+	philo = all[*N];
 	gettimeofday(&philo.start_eating, NULL);
 	while (died != 1)
 	{
@@ -90,7 +90,8 @@ t_thread   create_threads(t_philo philo)
     {
 		//all[i] = malloc(sizeof(t_philo));
         philo.id = i + 1;
-		N = i;
+        N = malloc(sizeof(int));
+		*N = i;
 		philo.count_eat = 0;
 		all[i] = philo;
         if ( pthread_create(&threads[i], NULL, &routine, all) != 0)
@@ -100,7 +101,6 @@ t_thread   create_threads(t_philo philo)
         }
 		//usleep(160000);
         i += 2;
-		//printf("n is %d\n", N);
     }
     i = 0;
     while (i < philo.num_philo)
@@ -113,7 +113,8 @@ t_thread   create_threads(t_philo philo)
     {
 		//all[i] = malloc(sizeof(t_philo));
         philo.id = i + 1;
-		N = i;
+        N = malloc(sizeof(int));
+		*N = i;
 		all[i] = philo;
         if ( pthread_create(&threads[i], NULL, &routine, all) != 0)
         {
@@ -159,7 +160,7 @@ int main(int argc, char **argv)
     philosophers = parse_arguments(argc, argv);
 	philosophers.id = 0;
 	//flag = initialize_flag(philosophers);
-	N = 0;
+	//N = 0;
 	died = 0;
     philosophers.forks = initialize_forks(philosophers);
     philo = create_threads(philosophers);

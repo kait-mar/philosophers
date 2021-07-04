@@ -8,7 +8,7 @@
 #include <sys/time.h>
 #include "./Libft/libft.h"
 
-int N;
+int *N;
 int *flag;
 int died;
 typedef struct s_philo
