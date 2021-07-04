@@ -21,6 +21,7 @@ typedef struct s_philo
     pthread_mutex_t  *forks;
     int id;
     int count_eat;
+    int died;
     struct timeval  start_eating;
 }   t_philo;
 

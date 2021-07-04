@@ -14,6 +14,7 @@ t_philo eating_thread(t_philo philo)
 {
     if (verify_dying(philo) == 1)
     {
+        philo.died = 1;
         return (philo);
     }
     philo.count_eat++;

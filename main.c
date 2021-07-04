@@ -42,19 +42,20 @@ void    print_philo(t_philo philo)
 void    *routine(void *ptr)
 {
     t_philo philo;
-	t_philo	*all;
+	//t_philo	*all;
 
-    all = (t_philo *)ptr;
-	philo = all[*N];
-	gettimeofday(&philo.start_eating, NULL);
-	while (died != 1)
+    //all = (t_philo *)ptr;
+	//philo = all[*N];
+    philo = *(t_philo *)ptr;
+    gettimeofday(&philo.start_eating, NULL);
+	while (philo.died != 1)
 	{
 		//*********************** start eating
 		philo = eating_thread(philo);
 		////////verify dying
 		if (verify_dying(philo) == 1)
 		{
-			//printf("yes\n");
+			philo.died = 1;
 			died = 1;
 			break ;
 		}
@@ -64,6 +65,7 @@ void    *routine(void *ptr)
 		my_sleep(philo.time_sleep);
 		if (verify_dying(philo) == 1)
 		{
+            philo.died = 1;
 			died = 1;
 			break ;
 		}
@@ -90,11 +92,12 @@ t_thread   create_threads(t_philo philo)
     {
 		//all[i] = malloc(sizeof(t_philo));
         philo.id = i + 1;
-        N = malloc(sizeof(int));
-		*N = i;
+        //N = malloc(sizeof(int));
+		//*N = i;
 		philo.count_eat = 0;
 		all[i] = philo;
-        if ( pthread_create(&threads[i], NULL, &routine, all) != 0)
+        //all[i].died = 0;
+        if ( pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
@@ -113,10 +116,10 @@ t_thread   create_threads(t_philo philo)
     {
 		//all[i] = malloc(sizeof(t_philo));
         philo.id = i + 1;
-        N = malloc(sizeof(int));
-		*N = i;
+        //N = malloc(sizeof(int));
+		//*N = i;
 		all[i] = philo;
-        if ( pthread_create(&threads[i], NULL, &routine, all) != 0)
+        if ( pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
         {
             printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
@@ -159,6 +162,7 @@ int main(int argc, char **argv)
 
     philosophers = parse_arguments(argc, argv);
 	philosophers.id = 0;
+    philosophers.died = 0;
 	//flag = initialize_flag(philosophers);
 	//N = 0;
 	died = 0;
