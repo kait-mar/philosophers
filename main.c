@@ -46,6 +46,11 @@ void    *routine(void *ptr)
 
     check = 0;
     philo = *(t_philo *)ptr;
+    if ((philo.id - 1) % 2 != 0)
+    {
+        printf("yes with %d\n", philo.id);
+        my_sleep(100);
+    }
     gettimeofday(&philo.start_eating, NULL);
 	while (philo.died != 1 && died != 1)
 	{
@@ -75,13 +80,12 @@ void    *routine(void *ptr)
     return (ptr);
 }
 
-t_thread   create_threads(t_philo philo)
+/*t_thread   create_threads(t_philo philo)
 {
     t_thread    tr;
     pthread_t   *threads;
     pthread_mutex_t  *forks;
 	t_philo	*all;
-    //t_philo *new;
 
     int i = 0;
 	all = malloc(sizeof(t_philo) * philo.num_philo);
@@ -99,11 +103,11 @@ t_thread   create_threads(t_philo philo)
         all[i].died = 0;
         all[i].id = i + 1;
         all[i].count_eat = 0;
-        /*new = malloc(sizeof(t_philo));
-        new = fill_copy(new, philo);
-        new->id = i + 1;
-		new->count_eat = 0;
-        new->died = 0;*/
+        //new = malloc(sizeof(t_philo));
+        //new = fill_copy(new, philo);
+        //new->id = i + 1;
+		//new->count_eat = 0;
+        //new->died = 0;
         if ( pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
         {
             printf("%s\n", strerror(errno));
@@ -128,11 +132,11 @@ t_thread   create_threads(t_philo philo)
         all[i].died = 0;
         all[i].id = i + 1;
         all[i].count_eat = 0;
-        /*new = malloc(sizeof(t_philo));
-        new = fill_copy(new, philo);
-        new->id = i + 1;
-		new->count_eat = 0;
-        new->died = 0;*/
+        //new = malloc(sizeof(t_philo));
+        //new = fill_copy(new, philo);
+        //new->id = i + 1;
+		//new->count_eat = 0;
+        //new->died = 0;
         if (pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
         {
             printf("%s\n", strerror(errno));
@@ -150,7 +154,7 @@ t_thread   create_threads(t_philo philo)
     }
     tr.threads = threads;
     return (tr);
-}
+}*/
 
 pthread_mutex_t *initialize_mutex(t_philo philo)
 {

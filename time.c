@@ -25,7 +25,7 @@ t_philo verify_dying(t_philo philo)
         /*if (pthread_mutex_lock(&philo.print[philo.id - 1]) != 0)
             printf("error in locking to die\n");*/
         printf("%lld %d died\n", get_time(philo), philo.id);
-        printf("%lld %d has died\n", get_time(philo), philo.id);
+        //printf("%lld %d \n", get_time(philo), philo.id);
         philo.died = 1;
         died = 1;
         return (philo);
@@ -33,7 +33,7 @@ t_philo verify_dying(t_philo philo)
     gettimeofday(&tv, NULL);
     if (micro_to_mill((long)tv.tv_usec - (long)philo.start_eating.tv_usec) >= philo.time_die)
     {
-        printf("%lld %d has died\n", get_time(philo), philo.id);
+        printf("%lld %d died\n", get_time(philo), philo.id);
         died = 1;
         philo.died = 1;
         return (philo);
