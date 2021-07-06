@@ -8,8 +8,7 @@
 #include <sys/time.h>
 #include "./Libft/libft.h"
 
-int *N;
-int *flag;
+int *eat_times;
 int died;
 typedef struct s_philo
 {
@@ -17,12 +16,14 @@ typedef struct s_philo
     long time_die;
     long time_eat;
     long time_sleep;
-    int *eat_times;
+    long eat_times;
     pthread_mutex_t  *forks;
     pthread_mutex_t  *print;
     int id;
     int count_eat;
     int died;
+    int life;
+    int curent;
     struct timeval  start_eating;
     struct timeval  start;
 }   t_philo;
@@ -51,5 +52,7 @@ t_philo *fill_copy(t_philo *new, t_philo philo);
 t_philo copy(t_philo new, t_philo philo);
 long long get_time(t_philo philo);
 long    diff(struct timeval tv, struct timeval current);
+void    *main_thread(void *ptr);
+int     verify(t_philo philo);
 
 #endif

@@ -39,7 +39,7 @@ t_philo eating_thread(t_philo philo)
     {
         return (philo);
     }
-    philo.count_eat++;
+    eat_times[philo.id - 1] += 1;
     if (philo.id == philo.num_philo)
     {
         if (pthread_mutex_lock(&philo.forks[0]) != 0
@@ -65,12 +65,17 @@ t_philo eating_thread(t_philo philo)
         return (philo);
     /*printf("%d has taken a fork\n", philo.id);
     printf("%d has taken a fork\n", philo.id);*/
-    gettimeofday(&philo.start_eating, NULL);
+    //gettimeofday(&philo.start_eating, NULL);
      if (philo.died == 0 && died == 0)
-        printf("%lld %d is eating\n", get_time(philo),philo.id);
+     {
+         //gettimeofday(&philo.start_eating, NULL);
+         gettimeofday(&philo.start_eating, NULL);
+         printf("%lld %d is eating\n", get_time(philo),philo.id);
+     }
     else
         return (philo);
     my_sleep(philo.time_eat);
+   // printf("the time is %lld\n", get_time(philo));
     if (philo.id == philo.num_philo)
     {
 		if (pthread_mutex_unlock(&philo.forks[0]) != 0
