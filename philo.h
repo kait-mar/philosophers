@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <sys/time.h>
-#include "./Libft/libft.h"
+//#include "./Libft/libft.h"
 
 int *eat_times;
 int died;
@@ -28,18 +28,18 @@ typedef struct s_philo
     struct timeval  start;
 }   t_philo;
 
-typedef struct s_thread
-{
-    pthread_t   *threads;
-    pthread_mutex_t  *mutex;
-}   t_thread;
+// typedef struct s_thread
+// {
+//     pthread_t   *threads;
+//     pthread_mutex_t  *mutex;
+// }   t_thread;
 
 void	print_error(void);
 int	valid(char *argv);
 int	valid2(char *argv, int *eat);
 t_philo parse_arguments(int argc, char **argv);
 void    print_philo(t_philo philo);
-t_thread   create_threads(t_philo philo);
+t_philo   create_threads(t_philo philo);
 pthread_mutex_t *initialize_mutex(t_philo philo);
 void    *routine(void *ptr);
 long    micro_to_mill(long m);
@@ -54,5 +54,7 @@ long long get_time(t_philo philo);
 long    diff(struct timeval tv, struct timeval current);
 void    *main_thread(void *ptr);
 int     verify(t_philo philo);
+long	ft_atoi(const char *str);
+t_philo *create_threads_core(t_philo philo, t_philo *all, pthread_t *threads);
 
 #endif

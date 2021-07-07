@@ -8,6 +8,7 @@ void    *routine(void *ptr)
     check = 0;
     philo = *(t_philo *)ptr;
     gettimeofday(&philo.start_eating, NULL);
+     philo.curent = philo.start_eating.tv_sec * 1000 + philo.start_eating.tv_usec / 1000; 
     if ((philo.id - 1) % 2 != 0 && philo.num_philo > 1)
     {
         if (philo.time_die < philo.time_eat)
@@ -18,14 +19,11 @@ void    *routine(void *ptr)
 	while (1)
 	{
         check = 1;
-		philo = eating_thread(philo);
+        philo = eating_thread(philo);
 		philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
-		{
 			break ;
-		}
 		printf("%lld %d is sleeping\n", get_time(philo),  philo.id);
-		//can he die while sleeping ? !! I think yes
 		my_sleep(philo.time_sleep);
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
@@ -35,9 +33,8 @@ void    *routine(void *ptr)
 		printf("%lld %d is thinking\n", get_time(philo),  philo.id);
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
-		{
 			break ;
-		}
+        
 	}
     if (check == 0)
     {
@@ -58,7 +55,6 @@ pthread_mutex_t *initialize_mutex(t_philo philo)
     {
         if (pthread_mutex_init(&philo.forks[i++], NULL) != 0)
         {
-            printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
     }
@@ -68,7 +64,7 @@ pthread_mutex_t *initialize_mutex(t_philo philo)
 int main(int argc, char **argv)
 {
     t_philo philosophers;
-    t_thread   philo;
+    //t_thread   philo;
 
     philosophers = parse_arguments(argc, argv);
 	philosophers.id = 0;
@@ -78,6 +74,6 @@ int main(int argc, char **argv)
 	died = 0;
     philosophers.forks = initialize_mutex(philosophers);
     philosophers.print = initialize_mutex(philosophers);
-    philo = create_threads(philosophers);
+    philosophers = create_threads(philosophers);
     return (1);
 }

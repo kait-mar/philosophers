@@ -5,15 +5,15 @@ void    my_sleep(long time)
     struct timeval  current_time;
     struct timeval  tv;
     
-    gettimeofday(&current_time, NULL);
+    //gettimeofday(&current_time, NULL);
     usleep(mill_to_micro(time));
-    while (1)
+    /*while (1)
     {
         gettimeofday(&tv, NULL);
         //if (micro_to_mill((long)tv.tv_usec - (long)current_time.tv_usec) >= time)
         if (diff(tv, current_time) >= time)
             break ;
-    }
+    }*/
 }
 
 t_philo verify_dying(t_philo philo)
@@ -36,9 +36,13 @@ t_philo verify_dying(t_philo philo)
         return (philo);
     }
     gettimeofday(&tv, NULL);
+    //printf(" with [%d] || start_eating=%ld | diff = %ld\n", philo.id, diff(philo.start_eating, philo.start), diff(tv, philo.start_eating));
     //printf("the curent is %lld and start_eating is %lld\n", get_time())
     //if (micro_to_mill((long)tv.tv_usec - (long)philo.start_eating.tv_usec) >= philo.time_die)
-    if (diff(tv, philo.start_eating) >= philo.time_die)
+    int l = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    int t = l - philo.curent;
+    //printf("T ==> %d || time_die ==> %ld\n", t, philo.time_die);
+    if (/*diff(tv, philo.start_eating) > philo.time_die*/  t > philo.time_die)
     {
         int i = 0;
         while (i < philo.num_philo)

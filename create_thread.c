@@ -1,22 +1,13 @@
 #include "philo.h"
 
-t_thread   create_threads(t_philo philo)
+t_philo *create_threads_core(t_philo philo, t_philo *all, pthread_t *threads)
 {
-    t_thread    tr;
-    pthread_t   *threads;
-    pthread_mutex_t  *forks;
-	t_philo	*all;
+    int i;
 
-    int i = 0;
-	all = malloc(sizeof(t_philo) * philo.num_philo);
-    while (i < philo.num_philo)
-        gettimeofday(&all[i++].start, NULL);
-    threads = malloc(sizeof(pthread_t) * philo.num_philo + 1);
-    forks = malloc(sizeof(pthread_mutex_t) * philo.num_philo);
     i = 0;
-    tr.mutex = forks;
     while (i < philo.num_philo)
     {
+        gettimeofday(&all[i].start, NULL);
         all[i] = copy(all[i], philo);
         all[i].died = 0;
         all[i].id = i + 1;
@@ -24,26 +15,37 @@ t_thread   create_threads(t_philo philo)
         eat_times[i] = 0;
         if ( pthread_create(&threads[i], NULL, &routine, &all[i]) != 0)
         {
-            printf("%s\n", strerror(errno));
             exit(EXIT_FAILURE);
         }
         i += 1;
     }
-    all[i] = copy(all[i], philo);
-    all[i].died = 0;
-    if ( pthread_create(&threads[i + 1], NULL, &main_thread, &all[i]) != 0)
-    {
-        printf("%s\n", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    pthread_join(threads[i + 1], NULL);
-   /* while (i < philo.num_philo)
-    {
-        pthread_join(threads[i], NULL);
-        i += 1;
-    }*/
-    tr.threads = threads;
-    return (tr);
+    return (all);
+}
+
+t_philo   *test(t_philo philo)
+{
+    t_philo   *threads;
+
+    threads = malloc(sizeof(t_philo) * (philo.num_philo + 1));
+    if (threads == NULL)
+        printf("YEEEEEEESSSSS\n");
+    return (threads);
+}
+
+t_philo   create_threads(t_philo philo)
+{
+    pthread_t   *threads;
+	t_philo	*all;
+
+	all = malloc(sizeof(t_philo) * (philo.num_philo + 1));
+    threads = malloc(sizeof(pthread_t) * (philo.num_philo + 1));
+    all = create_threads_core(philo, all, threads);
+    all[philo.num_philo] = copy(all[philo.num_philo], philo);
+    all[philo.num_philo].died = 0;
+    if ( pthread_create(&threads[philo.num_philo], NULL, &main_thread, &all[philo.num_philo]) != 0)
+        return (philo);
+    pthread_join(threads[philo.num_philo], NULL);
+    return (philo);
 }
 
 int     verify(t_philo philo)
@@ -56,6 +58,11 @@ int     verify(t_philo philo)
         {
             return (0);
         }
+        if (philo.eat_times == -1)
+        {
+            printf("NOO\n");
+            return (0);
+        }
         i++;
     }
     return (1);
@@ -66,12 +73,10 @@ void    *main_thread(void *ptr)
     t_philo philo;
 
     philo = *(t_philo *)ptr;
-    int i;
-
-    i = 0;
     while (1)
     {
         if (died == 1 || verify(philo) == 1)
+        //if (died == 1)
             break ;
     }
     return (ptr);

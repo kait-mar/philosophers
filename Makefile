@@ -6,7 +6,7 @@
 #    By: kait-mar <kait-mar@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/11/30 17:15:38 by molabhai          #+#    #+#              #
-#    Updated: 2021/06/07 12:41:13 by molabhai         ###   ########.fr        #
+#    Updated: 2021/07/07 15:47:25 by kait-mar         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NAME= philo
@@ -15,7 +15,7 @@ CC= gcc
 
 FLAGS= -Wall -Wextra -Werror
 
-SRCS=  main.c parse.c philo_utils.c time.c create_thread.c
+SRCS=  main.c parse.c philo_utils.c time.c create_thread.c ft_atoi.c
 
 OBJ = $(SRCS:.c=.o)
 
@@ -25,15 +25,12 @@ DELETEOBJ= rm -rf *.o
 
 DELETENAME= rm -rf $(NAME)
 
-MAKINGLIBFT= cd Libft && make -f Makefile
 
 all: $(NAME)
 $(NAME):
-	$(MAKINGLIBFT)
-	$(CC) $(FLAGS) $(SRCS)  Libft/libft.a -o philo
+	$(CC) $(SRCS)  -o philo
 clean:
 	$(DELETEOBJ) $(DELETENAME)
-	cd Libft && make fclean -f Makefile
 
 fclean : clean
 	rm -rf $(NAME)

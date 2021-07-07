@@ -45,7 +45,8 @@ t_philo eating_thread(t_philo philo)
         if (pthread_mutex_lock(&philo.forks[0]) != 0
 			|| pthread_mutex_lock(&philo.forks[philo.id - 1]) != 0)
         {
-			printf("error in locking a fork for %d | %s\n", philo.id, strerror(errno));
+			printf("error in locking a fork for %d\n", philo.id);
+            //return (philo);
 		}
     }
     else
@@ -53,7 +54,8 @@ t_philo eating_thread(t_philo philo)
 		if (pthread_mutex_lock(&philo.forks[philo.id - 1]) != 0
 			|| pthread_mutex_lock(&philo.forks[philo.id]) != 0)
 		{
-			printf("error in locking a fork for %d | %s\n", philo.id, strerror(errno));
+			printf("error in locking a fork for %d\n", philo.id);
+            //return (philo);
 		}
     }
     if (philo.died == 0 && died == 0)
@@ -70,6 +72,7 @@ t_philo eating_thread(t_philo philo)
      {
          //gettimeofday(&philo.start_eating, NULL);
          gettimeofday(&philo.start_eating, NULL);
+         philo.curent = philo.start_eating.tv_sec * 1000 + philo.start_eating.tv_usec / 1000; 
          printf("%lld %d is eating\n", get_time(philo),philo.id);
      }
     else
@@ -80,13 +83,14 @@ t_philo eating_thread(t_philo philo)
     {
 		if (pthread_mutex_unlock(&philo.forks[0]) != 0
 			|| pthread_mutex_unlock(&philo.forks[philo.id - 1]) != 0)
-			printf("error in unlocking a fork for %d | %s\n", philo.id, strerror(errno));
+			printf("error in unlocking a fork for %d\n", philo.id);
+
     }
     else
     {
 		if (pthread_mutex_unlock(&philo.forks[philo.id - 1]) != 0 
 			|| pthread_mutex_unlock(&philo.forks[philo.id]) != 0)
-			printf("error in unlocking a fork for %d | %s\n", philo.id, strerror(errno));
+			printf("error in unlocking a fork for %d\n", philo.id);
     }
     return (philo);
 }
