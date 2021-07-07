@@ -22,8 +22,8 @@ typedef struct s_philo
     int id;
     int count_eat;
     int died;
-    int life;
-    int curent;
+    long life;
+    long curent;
     struct timeval  start_eating;
     struct timeval  start;
 }   t_philo;

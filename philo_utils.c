@@ -72,12 +72,15 @@ t_philo eating_thread(t_philo philo)
      {
          //gettimeofday(&philo.start_eating, NULL);
          gettimeofday(&philo.start_eating, NULL);
-         philo.curent = philo.start_eating.tv_sec * 1000 + philo.start_eating.tv_usec / 1000; 
+         philo.life = philo.curent; 
          printf("%lld %d is eating\n", get_time(philo),philo.id);
      }
     else
         return (philo);
     my_sleep(philo.time_eat);
+    struct timeval val;
+    gettimeofday(&val, NULL);
+    philo.curent = val.tv_sec * 1000 + val.tv_usec / 1000; 
    // printf("the time is %lld\n", get_time(philo));
     if (philo.id == philo.num_philo)
     {

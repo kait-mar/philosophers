@@ -35,14 +35,13 @@ t_philo verify_dying(t_philo philo)
         died = 1;
         return (philo);
     }
-    gettimeofday(&tv, NULL);
+    //gettimeofday(&tv, NULL);
     //printf(" with [%d] || start_eating=%ld | diff = %ld\n", philo.id, diff(philo.start_eating, philo.start), diff(tv, philo.start_eating));
     //printf("the curent is %lld and start_eating is %lld\n", get_time())
     //if (micro_to_mill((long)tv.tv_usec - (long)philo.start_eating.tv_usec) >= philo.time_die)
-    int l = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-    int t = l - philo.curent;
-    //printf("T ==> %d || time_die ==> %ld\n", t, philo.time_die);
-    if (/*diff(tv, philo.start_eating) > philo.time_die*/  t > philo.time_die)
+
+    //printf("ID ==> %d || T ==> %ld || time_die ==> %ld || time ==> %ld\n", philo.id, philo.curent, philo.life, philo.curent - philo.life);
+    if (/*diff(tv, philo.start_eating) > philo.time_die*/  (philo.curent - philo.life) > philo.time_die)
     {
         int i = 0;
         while (i < philo.num_philo)

@@ -3,12 +3,14 @@
 void    *routine(void *ptr)
 {
     t_philo philo;
+    struct timeval val;
+    
     int     check;
 
     check = 0;
     philo = *(t_philo *)ptr;
-    gettimeofday(&philo.start_eating, NULL);
-     philo.curent = philo.start_eating.tv_sec * 1000 + philo.start_eating.tv_usec / 1000; 
+    gettimeofday(&val, NULL);
+    philo.life = val.tv_sec * 1000 + val.tv_usec / 1000; 
     if ((philo.id - 1) % 2 != 0 && philo.num_philo > 1)
     {
         if (philo.time_die < philo.time_eat)
@@ -18,6 +20,8 @@ void    *routine(void *ptr)
     }
 	while (1)
 	{
+        gettimeofday(&val, NULL);
+        philo.curent = val.tv_sec * 1000 + val.tv_usec / 1000; 
         check = 1;
         philo = eating_thread(philo);
 		philo = verify_dying(philo);
@@ -25,6 +29,8 @@ void    *routine(void *ptr)
 			break ;
 		printf("%lld %d is sleeping\n", get_time(philo),  philo.id);
 		my_sleep(philo.time_sleep);
+        gettimeofday(&val, NULL);
+        philo.curent = val.tv_sec * 1000 + val.tv_usec / 1000;
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
 		{
@@ -34,7 +40,6 @@ void    *routine(void *ptr)
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
 			break ;
-        
 	}
     if (check == 0)
     {
