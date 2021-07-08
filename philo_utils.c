@@ -29,6 +29,7 @@ t_philo copy(t_philo new, t_philo philo)
     new.time_sleep = philo.time_sleep;
     new.num_philo = philo.num_philo;
     new.forks = philo.forks;
+    new.print = philo.print;
     return (new);
 }
 

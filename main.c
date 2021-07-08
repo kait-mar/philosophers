@@ -23,14 +23,19 @@ void    *routine(void *ptr)
 		philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
 			break ;
+        //when use philo.forks instead, the opposite doesn't work !!!
+        pthread_mutex_lock(&philo.print[philo.id - 1]);
 		printf("%lld %d is sleeping\n", get_time(philo),  philo.id);
+        pthread_mutex_unlock(&philo.print[philo.id - 1]);
 		my_sleep(philo.time_sleep);
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
 		{
 			break ;
 		}
+        pthread_mutex_lock(&philo.print[philo.id - 1]);
 		printf("%lld %d is thinking\n", get_time(philo),  philo.id);
+        pthread_mutex_unlock(&philo.print[philo.id - 1]);
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
 			break ;

@@ -42,7 +42,7 @@ t_philo verify_dying(t_philo philo)
     int l = tv.tv_sec * 1000 + tv.tv_usec / 1000;
     int t = l - philo.curent;
     //printf("T ==> %d || time_die ==> %ld\n", t, philo.time_die);
-    if (/*diff(tv, philo.start_eating) > philo.time_die*/  t > philo.time_die)
+    if (diff(tv, philo.start_eating) > philo.time_die /* t > philo.time_die*/)
     {
         int i = 0;
         while (i < philo.num_philo)

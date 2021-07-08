@@ -75,8 +75,8 @@ void    *main_thread(void *ptr)
     philo = *(t_philo *)ptr;
     while (1)
     {
-        if (died == 1 || verify(philo) == 1)
-        //if (died == 1)
+        //if (died == 1 || verify(philo) == 1)
+        if (died == 1)
             break ;
     }
     return (ptr);
