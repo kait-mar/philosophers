@@ -13,7 +13,7 @@ NAME= philo
 
 CC= gcc -pthread
 
-FLAGS= -Wall -Wextra -Werror 
+FLAGS= -Wall -Wextra -Werror -fsanitize=adress
 
 SRCS=  main.c parse.c philo_utils.c time.c create_thread.c ft_atoi.c
 

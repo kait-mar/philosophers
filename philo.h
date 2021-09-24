@@ -56,5 +56,6 @@ void    *main_thread(void *ptr);
 int     verify(t_philo philo);
 long	ft_atoi(const char *str);
 t_philo *create_threads_core(t_philo philo, t_philo *all, pthread_t *threads);
+long long get(struct timeval start);
 
 #endif

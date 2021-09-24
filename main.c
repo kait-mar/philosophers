@@ -8,7 +8,7 @@ void    *routine(void *ptr)
     check = 0;
     philo = *(t_philo *)ptr;
     gettimeofday(&philo.start_eating, NULL);
-     philo.curent = philo.start_eating.tv_sec * 1000 + philo.start_eating.tv_usec / 1000; 
+    philo.curent = philo.start_eating.tv_sec * 1000 + philo.start_eating.tv_usec / 1000;
     if ((philo.id - 1) % 2 != 0 && philo.num_philo > 1)
     {
         if (philo.time_die < philo.time_eat)
@@ -71,6 +71,11 @@ int main(int argc, char **argv)
     t_philo philosophers;
     //t_thread   philo;
 
+    if (argc > 6 || argc < 5)
+    {
+        printf("an error of arguments\n");
+        return (1);
+    }
     philosophers = parse_arguments(argc, argv);
 	philosophers.id = 0;
     philosophers.died = 0;

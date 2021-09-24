@@ -35,6 +35,7 @@ t_philo verify_dying(t_philo philo)
         died = 1;
         return (philo);
     }
+    //printf("%d his last meal was in %ld\n", philo.id, diff(philo.start_eating, philo.start));
     gettimeofday(&tv, NULL);
     //printf(" with [%d] || start_eating=%ld | diff = %ld\n", philo.id, diff(philo.start_eating, philo.start), diff(tv, philo.start_eating));
     //printf("the curent is %lld and start_eating is %lld\n", get_time())
@@ -42,7 +43,9 @@ t_philo verify_dying(t_philo philo)
     int l = tv.tv_sec * 1000 + tv.tv_usec / 1000;
     int t = l - philo.curent;
     //printf("T ==> %d || time_die ==> %ld\n", t, philo.time_die);
-    if (diff(tv, philo.start_eating) > philo.time_die /* t > philo.time_die*/)
+    //printf("%lld with [%d] diff is %ld\n", get_time(philo), philo.id, diff(tv, philo.start_eating));
+    //printf("with [%d] the tv is %lld | and start_eating is %lld\n", philo.id, get(tv), get(philo.start_eating));
+    if (diff(tv, philo.start_eating) > philo.time_die + 10/* t > philo.time_die*/)
     {
         int i = 0;
         while (i < philo.num_philo)
@@ -51,6 +54,7 @@ t_philo verify_dying(t_philo philo)
                 printf("error in locking to die\n");
             i++;
         }
+        //printf("diff is %ld\n", diff(tv, philo.start_eating));
         printf("%lld %d died kait\n", get_time(philo), philo.id);
         died = 1;
         philo.died = 1;
@@ -67,6 +71,16 @@ long long get_time(t_philo philo)
     gettimeofday(&tv, NULL);
     //n = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
     return (diff(tv, philo.start));
+}
+
+long long get(struct timeval start)
+{
+    //long long n;
+    struct timeval tv;
+
+    gettimeofday(&tv, NULL);
+    //n = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+    return (diff(tv, start));
 }
 
 long    diff(struct timeval tv, struct timeval current)
