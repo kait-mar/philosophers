@@ -20,19 +20,22 @@ t_philo verify_dying(t_philo philo)
 {
     struct timeval tv;
 
-    if (philo.died == 1 || died == 1 || philo.num_philo == 1)
+    if (philo.died == 1 || died == 1)
     {
         int i = 0;
         while (i < philo.num_philo)
         {
             if (pthread_mutex_lock(&philo.forks[i]) != 0)
-                printf("error in locking to die\n");
+            printf("error in locking to die\n");
             i++;
         }
-        printf("%lld %d died mouad\n", get_time(philo), philo.id);
+        //printf("%lld %d died mouad\n", get_time(philo), philo.id);
         //printf("%lld %d \n", get_time(philo), philo.id);
         philo.died = 1;
         died = 1;
+        pthread_mutex_lock(&philo.print);
+        printf("%lld %d died new dying2\n", get_time(philo), philo.id);
+        //while (1);
         return (philo);
     }
     //printf("%d his last meal was in %ld\n", philo.id, diff(philo.start_eating, philo.start));
@@ -40,12 +43,10 @@ t_philo verify_dying(t_philo philo)
     //printf(" with [%d] || start_eating=%ld | diff = %ld\n", philo.id, diff(philo.start_eating, philo.start), diff(tv, philo.start_eating));
     //printf("the curent is %lld and start_eating is %lld\n", get_time())
     //if (micro_to_mill((long)tv.tv_usec - (long)philo.start_eating.tv_usec) >= philo.time_die)
-    int l = tv.tv_sec * 1000 + tv.tv_usec / 1000;
-    int t = l - philo.curent;
     //printf("T ==> %d || time_die ==> %ld\n", t, philo.time_die);
     //printf("%lld with [%d] diff is %ld\n", get_time(philo), philo.id, diff(tv, philo.start_eating));
     //printf("with [%d] the tv is %lld | and start_eating is %lld\n", philo.id, get(tv), get(philo.start_eating));
-    if (diff(tv, philo.start_eating) > philo.time_die + 10/* t > philo.time_die*/)
+    if (diff(tv, philo.start_eating) > philo.time_die)
     {
         int i = 0;
         while (i < philo.num_philo)
@@ -55,9 +56,12 @@ t_philo verify_dying(t_philo philo)
             i++;
         }
         //printf("diff is %ld\n", diff(tv, philo.start_eating));
-        printf("%lld %d died kait\n", get_time(philo), philo.id);
+        // printf("%lld %d died kait\n", get_time(philo), philo.id);
         died = 1;
         philo.died = 1;
+        pthread_mutex_lock(&philo.print);
+         printf("%lld %d died kait\n", get_time(philo), philo.id);
+        //while (1);
         return (philo);
     }
     return (philo);

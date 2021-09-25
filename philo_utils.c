@@ -33,7 +33,7 @@ t_philo copy(t_philo new, t_philo philo)
     return (new);
 }
 
-t_philo eating_thread(t_philo philo)
+t_philo eating_thread2(t_philo philo)
 {
     // printf("***********verify HERE*********** with %d\n", philo.id);
     philo = verify_dying(philo);
@@ -96,7 +96,7 @@ t_philo eating_thread(t_philo philo)
      }
     else
         return (philo);
-    my_sleep(philo.time_eat);
+    usleep(philo.time_eat * 1000);
    // printf("the time is %lld\n", get_time(philo));
     if (philo.id == philo.num_philo)
     {
@@ -129,4 +129,44 @@ int *initialize_flag(t_philo philo)
     while (i < philo.num_philo)
         f[i++] = -1;
     return (f);
+}
+
+t_philo eating_thread(t_philo philo)
+{
+    struct timeval tv;
+
+    if (pthread_mutex_lock(&philo.forks[philo.id % philo.num_philo]) != 0
+        || pthread_mutex_lock(&philo.forks[(philo.id - 1) % philo.num_philo]) != 0)
+    {
+        printf("error in locking a fork for %d\n", philo.id);
+    }
+    gettimeofday(&tv, NULL);
+    if (diff(tv, philo.start_eating) > philo.time_die)
+    {
+        // printf("%lld %d died new dying\n", get_time(philo), philo.id);
+        died = 1;
+        philo.died = 1;
+        pthread_mutex_lock(&philo.print);
+        printf("%lld %d died new dying\n", get_time(philo), philo.id);
+        //while (1);
+        return (philo);
+    }
+    printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
+    printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
+    printf("%lld %d is eating\n", get_time(philo),philo.id);
+    gettimeofday(&philo.start_eating, NULL);
+    usleep(philo.time_eat * 1000); // what about the my_seleep !!
+    eat_times[philo.id - 1] += 1;
+    if (pthread_mutex_unlock(&philo.forks[philo.id % philo.num_philo]) != 0
+        || pthread_mutex_unlock(&philo.forks[(philo.id - 1) % philo.num_philo]) != 0)
+    {
+        printf("error in unlocking a fork for %d\n", philo.id);
+    }
+    if (verify(philo) == 1)
+    {
+        // to check it out later
+         philo.died = 1;
+        // while (1);
+    }
+    return (philo);
 }

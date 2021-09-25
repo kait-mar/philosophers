@@ -6,7 +6,6 @@
 #include <pthread.h>
 #include <errno.h>
 #include <sys/time.h>
-//#include "./Libft/libft.h"
 
 int *eat_times;
 int died;
@@ -18,7 +17,7 @@ typedef struct s_philo
     long time_sleep;
     long eat_times;
     pthread_mutex_t  *forks;
-    pthread_mutex_t  *print;
+    pthread_mutex_t  print;
     int id;
     int count_eat;
     int died;

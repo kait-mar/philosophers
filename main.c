@@ -12,9 +12,11 @@ void    *routine(void *ptr)
     if ((philo.id - 1) % 2 != 0 && philo.num_philo > 1)
     {
         if (philo.time_die < philo.time_eat)
-            my_sleep(philo.time_die);
+            usleep(philo.time_die * 1000);
+           // my_sleep(philo.time_die);
         else
-            my_sleep(philo.time_eat);
+            usleep(philo.time_eat * 1000);
+            //my_sleep(philo.time_eat);
     }
 	while (1)
 	{
@@ -24,27 +26,19 @@ void    *routine(void *ptr)
 		if (philo.died == 1 || died == 1)
 			break ;
         //when use philo.forks instead, the opposite doesn't work !!!
-        pthread_mutex_lock(&philo.print[philo.id - 1]);
-		printf("%lld %d is sleeping\n", get_time(philo),  philo.id);
-        pthread_mutex_unlock(&philo.print[philo.id - 1]);
-		my_sleep(philo.time_sleep);
+        usleep(philo.time_sleep * 1000);
+        printf("%lld %d is sleeping\n", get_time(philo),  philo.id);
+		//my_sleep(philo.time_sleep);
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
-		{
 			break ;
-		}
-        pthread_mutex_lock(&philo.print[philo.id - 1]);
 		printf("%lld %d is thinking\n", get_time(philo),  philo.id);
-        pthread_mutex_unlock(&philo.print[philo.id - 1]);
         philo = verify_dying(philo);
 		if (philo.died == 1 || died == 1)
 			break ;
-        
 	}
     if (check == 0)
     {
-        /*if (pthread_mutex_lock(&philo.print[philo.id - 1]) != 0)
-            printf("error in locking to die\n");*/
         printf("%lld %d died\n", get_time(philo), philo.id);
     }
     return (ptr);
@@ -77,13 +71,23 @@ int main(int argc, char **argv)
         return (1);
     }
     philosophers = parse_arguments(argc, argv);
+    if (philosophers.num_philo == 1)
+    {
+        gettimeofday(&philosophers.start, NULL);
+        printf("%lld 1 died\n", get_time(philosophers));
+        return (1);
+    }
 	philosophers.id = 0;
     philosophers.died = 0;
 	//flag = initialize_flag(philosophers);
 	eat_times = initialize_flag(philosophers);
 	died = 0;
     philosophers.forks = initialize_mutex(philosophers);
-    philosophers.print = initialize_mutex(philosophers);
+    if (pthread_mutex_init(&philosophers.print, NULL) != 0)
+    {
+        exit(EXIT_FAILURE);
+    }
+    //philosophers.print = initialize_mutex(philosophers);
     philosophers = create_threads(philosophers);
     return (1);
 }
