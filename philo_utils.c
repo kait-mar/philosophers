@@ -1,172 +1,56 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kait-mar <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/09/26 16:41:58 by kait-mar          #+#    #+#             */
+/*   Updated: 2021/09/26 16:42:00 by kait-mar         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-long    micro_to_mill(long m)
+long	micro_to_mill(long m)
 {
-    return (m * 0.001);
+	return (m * 0.001);
 }
 
-long    mill_to_micro(long m)
+t_philo	eating_thread(t_philo philo)
 {
-    return (m * 1000);
+	struct timeval	tv;
+
+	if (pthread_mutex_lock(&philo.forks[philo.id % philo.num_philo]) != 0
+		|| pthread_mutex_lock(&philo.forks[(philo.id - 1)
+				% philo.num_philo]) != 0)
+		printf("error in locking a fork for %d\n", philo.id);
+	gettimeofday(&tv, NULL);
+	if (diff(tv, philo.start_eating) > philo.time_die)
+	{
+		g_died = 1;
+		philo.died = 1;
+		pthread_mutex_lock(&philo.forks[philo.id + 1]);
+		printf("%lld %d died\n", get_time(philo), philo.id);
+		return (philo);
+	}
+	philo = eating_support(philo);
+	if (verify(philo) == 1)
+		philo.died = 1;
+	return (philo);
 }
 
-t_philo *fill_copy(t_philo *new, t_philo philo)
+t_philo	eating_support(t_philo philo)
 {
-    new->eat_times = philo.eat_times;
-    new->time_die = philo.time_die;
-    new->time_eat = philo.time_eat;
-    new->time_sleep = philo.time_sleep;
-    new->num_philo = philo.num_philo;
-    new->forks = philo.forks;
-    return (new);
-}
-
-t_philo copy(t_philo new, t_philo philo)
-{
-    new.eat_times = philo.eat_times;
-    new.time_die = philo.time_die;
-    new.time_eat = philo.time_eat;
-    new.time_sleep = philo.time_sleep;
-    new.num_philo = philo.num_philo;
-    new.forks = philo.forks;
-    new.print = philo.print;
-    return (new);
-}
-
-t_philo eating_thread2(t_philo philo)
-{
-    // printf("***********verify HERE*********** with %d\n", philo.id);
-    philo = verify_dying(philo);
-    if (philo.died == 1 || died == 1)
-    {
-        return (philo);
-    }
-    //eat_times[philo.id - 1] += 1;
-    if (philo.id == philo.num_philo)
-    {
-        if (pthread_mutex_lock(&philo.forks[0]) != 0
-			|| pthread_mutex_lock(&philo.forks[philo.id - 1]) != 0)
-        {
-			printf("error in locking a fork for %d\n", philo.id);
-            //return (philo);
-		}
-    }
-    else
-    {
-		if (pthread_mutex_lock(&philo.forks[philo.id - 1]) != 0
-			|| pthread_mutex_lock(&philo.forks[philo.id]) != 0)
-		{
-			printf("error in locking a fork for %d\n", philo.id);
-            //return (philo);
-		}
-    }
-    //philo = verify_dying(philo);
-    //////****************adds***********
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    // printf("before checking , tv is %ld", )
-    /*if (diff(tv, philo.start_eating) > philo.time_die + 10)
-    {
-        printf("%lld %d died new dying\n", get_time(philo), philo.id);
-        died = 1;
-        philo.died = 1;
-        return (philo);
-    }*/
-    if (philo.died == 1 || died == 1)
-    {
-        return (philo);
-    }
-    // eat_times[philo.id - 1] += 1;
-    if (philo.died == 0 && died == 0)
-    {
-        printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
-        printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
-    }
-    else
-        return (philo);
-    /*printf("%d has taken a fork\n", philo.id);
-    printf("%d has taken a fork\n", philo.id);*/
-    //gettimeofday(&philo.start_eating, NULL);
-     if (philo.died == 0 && died == 0)
-     {
-         //gettimeofday(&philo.start_eating, NULL);
-         gettimeofday(&philo.start_eating, NULL);
-         philo.curent = philo.start_eating.tv_sec * 1000 + philo.start_eating.tv_usec / 1000; 
-         printf("******* %lld %d is eating **********************\n", get_time(philo),philo.id);
-     }
-    else
-        return (philo);
-    usleep(philo.time_eat * 1000);
-   // printf("the time is %lld\n", get_time(philo));
-    if (philo.id == philo.num_philo)
-    {
-		if (pthread_mutex_unlock(&philo.forks[0]) != 0
-			|| pthread_mutex_unlock(&philo.forks[philo.id - 1]) != 0)
-			printf("error in unlocking a fork for %d\n", philo.id);
-
-    }
-    else
-    {
-		if (pthread_mutex_unlock(&philo.forks[philo.id - 1]) != 0 
-			|| pthread_mutex_unlock(&philo.forks[philo.id]) != 0)
-			printf("error in unlocking a fork for %d\n", philo.id);
-    }
-    eat_times[philo.id - 1] += 1;
-    if (verify(philo) == 1)
-        philo.died = 1;
-    return (philo);
-}
-
-int *initialize_flag(t_philo philo)
-{
-    int *f;
-    int i;
-
-    f = malloc(sizeof(int) * philo.num_philo);
-    if (f == NULL)
-        return (NULL);
-    i = 0;
-    while (i < philo.num_philo)
-        f[i++] = -1;
-    return (f);
-}
-
-t_philo eating_thread(t_philo philo)
-{
-    struct timeval tv;
-
-    if (pthread_mutex_lock(&philo.forks[philo.id % philo.num_philo]) != 0
-        || pthread_mutex_lock(&philo.forks[(philo.id - 1) % philo.num_philo]) != 0)
-    {
-        printf("error in locking a fork for %d\n", philo.id);
-    }
-    gettimeofday(&tv, NULL);
-    if (diff(tv, philo.start_eating) > philo.time_die)
-    {
-        // printf("%lld %d died new dying\n", get_time(philo), philo.id);
-        died = 1;
-        philo.died = 1;
-        pthread_mutex_lock(&philo.print);
-        printf("%lld %d died new dying\n", get_time(philo), philo.id);
-        //while (1);
-        return (philo);
-    }
-    printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
-    printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
-    printf("%lld %d is eating\n", get_time(philo),philo.id);
-    gettimeofday(&philo.start_eating, NULL);
-    usleep(philo.time_eat * 1000); // what about the my_seleep !!
-    eat_times[philo.id - 1] += 1;
-    if (pthread_mutex_unlock(&philo.forks[philo.id % philo.num_philo]) != 0
-        || pthread_mutex_unlock(&philo.forks[(philo.id - 1) % philo.num_philo]) != 0)
-    {
-        printf("error in unlocking a fork for %d\n", philo.id);
-    }
-    if (verify(philo) == 1)
-    {
-        // to check it out later
-         philo.died = 1;
-        // while (1);
-    }
-    return (philo);
+	printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
+	printf("%lld %d has taken a fork\n", get_time(philo), philo.id);
+	printf("%lld %d is eating\n", get_time(philo), philo.id);
+	gettimeofday(&philo.start_eating, NULL);
+	usleep(philo.time_eat * 900);
+	g_eat_times[philo.id - 1] += 1;
+	if (pthread_mutex_unlock(&philo.forks[philo.id % philo.num_philo]) != 0
+		|| pthread_mutex_unlock(&philo.forks[(philo.id - 1)
+				% philo.num_philo]) != 0)
+		printf("error in unlocking a fork for %d\n", philo.id);
+	return (philo);
 }

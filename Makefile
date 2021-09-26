@@ -13,9 +13,9 @@ NAME= philo
 
 CC= gcc -pthread
 
-FLAGS= -Wall -Wextra -Werror -fsanitize=adress
+FLAGS= -Wall -Wextra -Werror
 
-SRCS=  main.c parse.c philo_utils.c time.c create_thread.c ft_atoi.c
+SRCS=  main.c parse.c philo_utils.c time.c create_thread.c ft_atoi.c philo_utils2.c
 
 OBJ = $(SRCS:.c=.o)
 
